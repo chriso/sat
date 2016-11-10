@@ -9,12 +9,10 @@ import chris.sat._
   *
   * See: https://en.wikipedia.org/wiki/DPLL_algorithm
   */
-object DPLLSolver {
-
-  case class Step(formula: Formula, solution: Set[Int])
+object DPLLSolver extends Solver {
 
   def solve(formula: Formula): Result =
-    findSolution(Step(formula, Set.empty))
+    findSolution(Step(formula))
 
   /**
     * Recursively simplify the formula until a solution or
@@ -34,24 +32,21 @@ object DPLLSolver {
     * Simplify a formula via unit propagation and pure literal elimination.
     */
   private def simplify(step: Step) =
-    propagate(step, step.formula.pureLiterals ++ step.formula.unitClauseLiterals)
+    step
+      .propagate(step.formula.unitClauseLiterals)
+      .propagate(step.formula.pureLiterals)
 
   /**
-    * Propagate a set of literals through the formula.
-    */
-  private def propagate(step: Step, literals: Set[Int]) =
-    Step(step.formula.propagate(literals), step.solution ++ literals)
-
-  /**
-    * Choose a literal to branch on.
+    * Choose a literal to branch on. The formula is guaranteed to have at
+    * least one non-empty clause.
     */
   private def chooseLiteral(formula: Formula): Int =
-    formula.clauses.toStream.filterNot(_.isEmpty).head.literals.head
+    formula.clauses.find(!_.isEmpty).get.literals.head
 
   private def branchAt(step: Step, literal: Int) =
     branch(
-      findSolution(propagate(step, Set(literal))),
-      findSolution(propagate(step, Set(-literal))))
+      findSolution(step.propagate(Set(literal))),
+      findSolution(step.propagate(Set(-literal))))
 
   private def branch(a: => Result, b: => Result) = {
     val result = a
