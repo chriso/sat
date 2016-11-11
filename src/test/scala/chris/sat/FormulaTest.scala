@@ -15,6 +15,13 @@ class FormulaTest extends FlatSpec with Matchers {
     satFormula.isKSat(1) shouldBe false
   }
 
+  it should "check if the formula is exactly K-SAT" in {
+    satFormula.isExactlyKSat(3) shouldBe false
+    satFormula.isExactlyKSat(2) shouldBe false
+    satFormula.isExactlyKSat(1) shouldBe false
+    unsatFormula.isExactlyKSat(1) shouldBe true
+  }
+
   it should "check if the formula is satisfied by a result" in {
     satFormula.isSatisfiedBy(Set(1, 2, 3)) shouldBe true
     satFormula.isSatisfiedBy(Set(1, 2)) shouldBe false

@@ -11,7 +11,7 @@ import chris.sat.Result
 object SCCSolver extends Solver {
 
   protected def solverImpl(input: Step): Result = {
-    require(input.formula.isKSat(2), "formula is not 2-SAT")
+    require(input.formula.isExactlyKSat(2), "formula is not exactly 2-SAT")
 
     ???
   }

@@ -18,6 +18,16 @@ case class Formula(clauses: Clause*) {
     clauses forall (_.length <= k)
 
   /**
+    * Check if the formula is exactly K-SAT, i.e. is made up of clauses with
+    * exactly K literals.
+    *
+    * @param k Maximum number of literals per clause
+    * @return True if the formula is exactly K-SAT, and false otherwise
+    */
+  def isExactlyKSat(k: Int): Boolean =
+    clauses forall (_.length == k)
+
+  /**
     * Check whether a set of literals satisfies the formula.
     *
     * @param literals Literals to check
